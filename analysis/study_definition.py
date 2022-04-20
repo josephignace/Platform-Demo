@@ -1,13 +1,26 @@
-from cohortextractor import StudyDefinition, patients, codelist, codelist_from_csv  # NOQA
+from cohortextractor import StudyDefinition, patients # NOQA
 
+# set index date
+index_date = "2020-01-01"
 
+# Study population
 study = StudyDefinition(
     default_expectations={
-        "date": {"earliest": "1900-01-01", "latest": "today"},
+        "date": {
+            "earliest": index_date,
+            "latest": "today",
+            },  # data range for simulated dates
         "rate": "uniform",
-        "incidence": 0.5,
+        "incidence": 1,
     },
-    population=patients.registered_with_one_practice_between(
-        "2019-02-01", "2020-02-01"
+    # Define study population
+    population=patients.registered_as_of(index_date),
+    # define the stp variable we want to extract
+    stp=patients.registered_practice_as_of(
+        index_date,
+        returning="stp_code",
+        return_expectations={
+            "category": {"ratios": {"STP1": 0.3, "STP2": 0.2, "STP3": 0.5}},
+        },
     ),
 )

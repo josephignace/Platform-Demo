@@ -1,12 +1,19 @@
 version: '3.0'
 
 expectations:
-  population_size: 1000
+  population_size: 10000
 
 actions:
 
-  generate_study_population:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition
+  generate_cohort_stppop:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_1_stppop --output-dir=output/cohorts
     outputs:
       highly_sensitive:
-        cohort: output/input.csv
+        cohort: output/cohorts/input_1_stppop.csv
+
+  plot_stppop:
+    run: r:latest analysis/1-plot-stppop.R
+    needs: [generate_cohort_stppop]
+    outputs:
+      moderately_sensitive:
+        figure1: output/plots/plot_stppop_bar.png
